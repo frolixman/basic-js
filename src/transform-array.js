@@ -13,9 +13,81 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function transform(arr) {
+  if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!");
+  
+  let resultArr = arr.slice();
+  let strCount = arr.reduce((acc, currentValue) => {
+    return ((typeof(currentValue) === "string") ? ++acc : acc);
+  }, 0)
+
+  for(let i = 0; i < strCount; i++){
+
+      console.log(`strCount - ${strCount}`);
+      console.log(`${i}й круг`);
+      console.log(`arr[${i}] - ${arr[i]}`);
+      console.log("resultArr в начале круга - " + resultArr);
+
+      let command = resultArr.find((el) => typeof(el) === "string");
+      console.log(`command - ${command}`);
+
+      switch (command) {
+          case "--discard-next":
+              discardNext(resultArr);
+              console.log("resultArr в после изменения - " + resultArr);
+              break;
+
+          case "--discard-prev":
+              discardPrev(resultArr);
+              console.log("resultArr в после изменения - " + resultArr);
+              break;
+
+          case "--double-next":
+              doubleNext(resultArr);
+              console.log("resultArr в после изменения - " + resultArr);
+              break;
+
+          case "--double-prev":
+              doublePrev(resultArr);
+              console.log("resultArr в после изменения - " + resultArr);
+              break;
+      
+      }
+  }
+
+  function discardNext (array) {
+      // if(arr[arr.indexOf('--discard-next') + 2] === "--discard-prev") return array.splice(array.indexOf('--discard-next'), 1);
+      if(arr.indexOf('--discard-next') < array.length - 1) {
+          return array.splice(arr.indexOf('--discard-next'), 2);
+      } else return array.splice(arr.indexOf('--discard-next'), 1);
+      
+  }
+  function discardPrev (array) {
+      if(arr[arr.indexOf('--discard-prev') - 2] === "--discard-next") return array.splice(array.indexOf('--discard-prev'), 1);
+      if(arr.indexOf('--discard-prev') > 0) {
+          return array.splice((arr.indexOf('--discard-prev') - 1), 2);
+      } else return array.splice(arr.indexOf('--discard-prev'), 1);
+      
+  }
+  function doubleNext (array) {
+      // if(arr[arr.indexOf('--double-next') + 2] === "--discard-prev") return array.splice(array.indexOf('--double-next'), 1);
+      if(arr.indexOf('--double-next') < array.length - 1) {
+          return array.splice(arr.indexOf('--double-next'), 1, array[arr.indexOf('--double-next') + 1]);
+      } else return array.splice(arr.indexOf('--double-next'), 1);
+      
+  }
+  function doublePrev (array) {
+      // console.log(arr);
+      // console.log(`индекс элемента --double-prev: ${arr.indexOf('--double-prev')}. На 2 позиции левее стоит элемент ${arr[arr.indexOf('--double-prev') - 2]}`)
+      if(arr[arr.indexOf('--double-prev') - 2] === "--discard-next") return array.splice(array.indexOf('--double-prev'), 1); 
+
+      if(arr.indexOf('--double-prev') > 0) {
+          return array.splice(arr.indexOf('--double-prev'), 1, array[(arr.indexOf('--double-prev'))-1]);
+      } else return array.splice(arr.indexOf('--double-prev'), 1);
+  }
+
+  return resultArr;
+
 }
 
 module.exports = {
